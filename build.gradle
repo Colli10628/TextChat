@@ -1,0 +1,10 @@
+plugins{
+	id 'application'
+	id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+mainClassName = "textchat.TextChat"
+repositories {
+    mavenCentral()
+}
+dependencies{
+}
