@@ -2,9 +2,10 @@ plugins{
 	id 'application'
 	id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
-mainClassName = "textchat.TextChat"
+mainClassName = "textchat.Launcher"
 repositories {
     mavenCentral()
 }
 dependencies{
+	compile 'com.google.guava:guava:19.0'
 }

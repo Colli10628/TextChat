@@ -23,6 +23,7 @@ public class TextChatClient{
 			BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 			Scanner inputScanner = new Scanner(System.in)){
 				System.out.println("Sending output to server...");
+				out.println("Luke");
 				while(true){
 					String input = inputScanner.nextLine();
 					out.println(input);
