@@ -3,14 +3,18 @@ package textchat;
 import java.io.Serializable;
 
 public class ClientSerialized implements Serializable{
-	public String username;
-	public String ip;
+	String username;
+	String ip;
+	String clientInternalIP;
+	String clientExternalIP;
 	int num = 0;
 
 	ClientSerialized(Client obj){
 		username = obj.usernameProperty().get();
 		ip = obj.ipProperty().get();
 		num = obj.getNum();
+		clientInternalIP = obj.getInternalIP();
+		clientExternalIP = obj.getExternalIP();
 	}
 
 	public int getNum(){
@@ -25,7 +29,7 @@ public class ClientSerialized implements Serializable{
 		return username;
 	}
 	Client getOriginal(){
-		return new Client(ip, username);
+		return new Client(ip, username, clientInternalIP, clientExternalIP);
 	}
 	@Override 
 	public String toString(){
