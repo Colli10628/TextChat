@@ -54,8 +54,11 @@ public class Client{
 	@Override
 	public boolean equals(Object other){
 		Client obj = (Client)other;
-		return obj.ip.equals(ip) || obj.username.equals(username) || 
-			(clientExternalIP.equals(obj.clientExternalIP) && clientInternalIP.equals(obj.clientInternalIP));
+		return username.equals(obj.username);
+	}
+	public boolean fullEquals(Object other){
+		Client obj = (Client)other;
+		return username.equals(obj.username) || (clientExternalIP.equals(obj.clientExternalIP) && clientInternalIP.equals(obj.clientInternalIP));
 	}
 	public int getNum(){
 		return num;

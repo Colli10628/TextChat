@@ -39,15 +39,13 @@ public class TextChatClientController {
                         super.updateItem(item, empty);
 						if(item != null){
 							Client temp = item.getOriginal();
-							if(!associatedClient.equals(temp)){
+							if(!associatedClient.fullEquals(temp)){
 								setText(item.getUsername());
 							}
 							else{
-								setText("");
 							}
 						}
                         else {
-                            setText("");
                         }
                     }
                 };
