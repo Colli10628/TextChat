@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javafx.collections.ObservableList;
@@ -12,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.ArrayList;
 
 public class TextChatServer{
 	private int port;
@@ -34,7 +36,7 @@ public class TextChatServer{
 					try{
 						System.out.println("Trying to listen on " + port);
 						Socket clientSocket = serverSocket.accept();
-						PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+						ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 						BufferedReader in = new BufferedReader(new InputStreamReader(
 						clientSocket.getInputStream()));
 						System.out.println("Client connected on port" + port);
@@ -46,7 +48,15 @@ public class TextChatServer{
 							return;
 						}
 						lock.lock();
+
 						clientList.add(newClient);
+						ArrayList<ClientSerialized> toSend = new ArrayList<>();
+
+						for(int counter = 0; counter < clientList.size(); counter++){
+							toSend.add(new ClientSerialized(clientList.get(counter)));
+						}
+
+						out.writeObject(toSend);
 						lock.unlock();
 						System.out.println(ip + " " + name);
 						while((inputLine = in.readLine()) != null){

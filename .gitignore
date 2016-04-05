@@ -3,7 +3,7 @@
 ### Gradle ###
 .gradle
 build/
-
+!build/TextChat-all.jar
 # Ignore Gradle GUI config
 gradle-app.setting
 
