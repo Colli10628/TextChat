@@ -11,6 +11,7 @@ import java.util.Scanner;
 import javafx.collections.ObservableList;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
+import javafx.application.Platform;
 
 public class TextChatClient{
 	private int port;
@@ -53,6 +54,8 @@ public class TextChatClient{
 				}
 				catch(Exception exc){
 					exc.printStackTrace();
+					Platform.exit();
+					System.exit(0);
 				}
 			};
 			

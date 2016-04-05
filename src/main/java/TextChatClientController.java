@@ -20,11 +20,12 @@ public class TextChatClientController {
     @FXML
     private ListView<ClientSerialized> clientList;
 
-	private TextChatClient client;
-	
+	private TextChatClient tClient;
+	private Client associatedClient;
 	public void initClient(String port, String ip, String username){
-		client = new TextChatClient(Integer.valueOf(port), ip, username);
-		clientList.setItems(client.getObservableOtherClientsList());
+		associatedClient = new Client(ip, username);
+		tClient = new TextChatClient(Integer.valueOf(port), ip, username);
+		clientList.setItems(tClient.getObservableOtherClientsList());
 	}
     @FXML
     void initialize() {
@@ -38,7 +39,7 @@ public class TextChatClientController {
                         super.updateItem(item, empty);
 						if(item != null){
 							Client temp = item.getOriginal();
-							if(!client.equals(temp)){
+							if(!associatedClient.equals(temp)){
 								setText(item.getUsername());
 							}
 							else{
