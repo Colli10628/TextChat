@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javafx.collections.ObservableList;
@@ -63,27 +64,23 @@ public class TextChatServer{
 						System.out.println("Trying to listen on " + port);
 						Socket clientSocket = serverSocket.accept();
 						ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-						BufferedReader in = new BufferedReader(new InputStreamReader(
-						clientSocket.getInputStream()));
+						ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 						System.out.println("Client connected on port" + port);
-						String name = "";
-						String inputLine = "";
 
-						name = in.readLine();
 
-						String ip = clientSocket.getInetAddress().getHostAddress();
-						Client newClient = new Client(ip, name);
+						ClientSerialized temp = (ClientSerialized)in.readObject();
+						Client newClient = temp.getOriginal();
 						if(clientList.contains(newClient)){
 							return;
 						}
 
 						clientList.add(newClient);
-						clientOutputStreams.put(ip+newClient.getNum(), out);
+						clientOutputStreams.put(newClient.getIp() + newClient.getNum(), out);
 
 						sendNewClientListToClients();
 						lock.unlock();
-						System.out.println(ip + " " + name);
-						while((inputLine = in.readLine()) != null){
+						String inputLine = "";
+						while((inputLine = (String)in.readObject()) != null){
 							System.out.println("Received message: " + inputLine + " from " + clientSocket.toString());
 						}
 						clientList.remove(newClient);
@@ -94,7 +91,7 @@ public class TextChatServer{
 						System.out.println(exc.getMessage());
 						exc.printStackTrace();
 					}
-					catch(IOException exc){
+					catch(IOException | ClassNotFoundException exc){
 						System.out.println("Exception when trying to listen on port");
 						exc.printStackTrace();
 					}

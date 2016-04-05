@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -39,11 +40,12 @@ public class TextChatClient{
 			Runnable getNewClientList = () -> {
 				try{
 					Socket serverSocket = new Socket(hostname, port);
-					PrintWriter out = new PrintWriter(serverSocket.getOutputStream(), true);
+					ObjectOutputStream out = new ObjectOutputStream(serverSocket.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
 					Scanner inputScanner = new Scanner(System.in);
 					System.out.println("Sending output to server...");
-					out.println(username);
+					Client newClient = new Client(hostname, username, NetworkUtilities.getInternalIp(), NetworkUtilities.getExternalIp());
+					out.writeObject(new ClientSerialized(newClient));
 
 					while(true){
 							ArrayList<ClientSerialized> list = (ArrayList<ClientSerialized>) in.readObject();	
