@@ -9,7 +9,7 @@ public class TextChat{
 		}
 		else if(args.length == 2){
 			System.out.println("Initializing client");
-			TextChatClient server = new TextChatClient(Integer.valueOf(args[0]), args[1]);			
+			TextChatClient server = new TextChatClient(Integer.valueOf(args[0]), args[1], "test");			
 		}
 		else{
 			System.out.println("Invalid number of arguments. Please launch the application as follows:");

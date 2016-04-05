@@ -18,7 +18,7 @@
             <Font size="26.0" />
          </font>
       </Label>
-      <Button layoutX="182.0" layoutY="341.0" mnemonicParsing="false" onMouseClicked="#launch" text="Launch" />
+      <Button defaultButton="true" layoutX="182.0" layoutY="341.0" mnemonicParsing="false" onMouseClicked="#launch" text="Launch" />
       <ToggleButton fx:id="serverOrClientButton" layoutX="183.0" layoutY="81.0" mnemonicParsing="false" onMouseClicked="#toggleServerOrClient" text="Server" />
       <GridPane layoutX="115.0" layoutY="155.0">
         <columnConstraints>

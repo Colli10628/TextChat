@@ -56,40 +56,78 @@ public class LauncherController {
 		ipTextField.setText("");
     }
 
+	private void showErrorMessage(String error){
+		Alert box = new Alert(AlertType.ERROR, error);
+		box.showAndWait();
+	}
+
     @FXML
     void launch(MouseEvent event) {
 		try{
 			if(serverOrClientButton.isSelected()){
 				String enteredPort = portTextField.getText();
 				if(enteredPort.equals("") || !enteredPort.matches(".*\\d+.*")){
-					Alert box = new Alert(AlertType.ERROR, "Please enter a numeric port.");
-					box.showAndWait();
-					return;
+					showErrorMessage("Please enter a numeric port");
 				}
-				if(!NetworkUtilities.isPortAvailable("localhost", Integer.valueOf(enteredPort)) || 
+				else if(NetworkUtilities.isPortAvailable("localhost", Integer.valueOf(enteredPort)) || 
 					!NetworkUtilities.hasPermissionToBindPort(Integer.valueOf(enteredPort))){
-					Alert box = new Alert(AlertType.ERROR, "The entered port is unavailable.");
-					box.showAndWait();
-					return;
+					showErrorMessage("Port is unavailable");
 				}
-				URL url = getClass().getClassLoader().getResource("TextChatServerController.fxml");
-				FXMLLoader fxmlLoader = new FXMLLoader(url);     
+				else{
+					URL url = getClass().getClassLoader().getResource("TextChatServerController.fxml");
+					FXMLLoader fxmlLoader = new FXMLLoader(url);     
 
-				Parent root = (Parent)fxmlLoader.load();          
-				TextChatServerController controller = (TextChatServerController)fxmlLoader.getController();
-				if(controller == null){
-					System.out.println("Controller is null!");
+					Parent root = (Parent)fxmlLoader.load();          
+					TextChatServerController controller = (TextChatServerController)fxmlLoader.getController();
+					if(controller == null){
+						System.out.println("Controller is null!");
+					}
+					controller.initPortAndIP(portTextField.getText(), NetworkUtilities.getExternalIp() + " / " + NetworkUtilities.getInternalIp());
+
+					Scene scene = new Scene(root); 
+					Stage stage = new Stage();
+					stage.setTitle("TextChat Server");
+					stage.setScene(scene);    
+
+					stage.show();   
+					((Node)event.getSource()).getScene().getWindow().hide();
 				}
-				controller.initPortAndIP(portTextField.getText(), NetworkUtilities.getExternalIp() + " / " + NetworkUtilities.getInternalIp());
-
-				Scene scene = new Scene(root); 
-				Stage stage = new Stage();
-				stage.setTitle("TextChat Server");
-				stage.setScene(scene);    
-
-				stage.show();   
 			}
-			((Node)event.getSource()).getScene().getWindow().hide();
+			else{
+				String username = userNameTextField.getText();
+				String ip = ipTextField.getText();
+				String port = portTextField.getText();
+				if(username.equals("") || ip.equals("") || port.equals("")){
+					showErrorMessage("All fields must not be empty");
+				}
+				else if(!port.matches(".*\\d+.*")){
+					showErrorMessage("Port must be numeric");
+				}
+				else if(!NetworkUtilities.isPortAvailable(ip, Integer.valueOf(port))){
+					showErrorMessage("Can't connect to the specified port and ip address");
+				}
+				else{
+					URL url = getClass().getClassLoader().getResource("TextChatClientController.fxml");
+					FXMLLoader fxmlLoader = new FXMLLoader(url);     
+
+					Parent root = (Parent)fxmlLoader.load();          
+					TextChatClientController controller = (TextChatClientController)fxmlLoader.getController();
+					if(controller == null){
+						System.out.println("Controller is null!");
+					}
+					controller.initClient(port, ip, username);
+
+					Scene scene = new Scene(root); 
+					Stage stage = new Stage();
+					stage.setTitle("TextChat Client");
+					stage.setScene(scene);    
+
+					stage.show();   
+
+					((Node)event.getSource()).getScene().getWindow().hide();
+				}
+				
+			}
 
 		}
 		catch(Exception exc){
@@ -107,11 +145,11 @@ public class LauncherController {
         assert userNameTextField != null : "fx:id=\"userNameTextField\" was not injected: check your FXML file 'Launcher.fxml'.";
         assert ipTextField != null : "fx:id=\"ipTextField\" was not injected: check your FXML file 'Launcher.fxml'.";
 
-	userNameText.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
-	userNameTextField.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
-	ipText.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
-	ipTextField.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
-	userNameTextField.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
+		userNameText.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
+		userNameTextField.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
+		ipText.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
+		ipTextField.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
+		userNameTextField.visibleProperty().bind(serverOrClientButton.selectedProperty().not());
     }
 }
 

@@ -88,17 +88,12 @@ public class NetworkUtilities {
 		try
 		{
 			s = new Socket(host, port);
-			return false;
+			s.close();
+			return true;
 		}
 		catch (Exception e)
 		{
-			return true;
-		}
-		finally
-		{
-			if(s != null)
-				try {s.close();}
-				catch(Exception e){}
+			return false;
 		}
 	}
 }
