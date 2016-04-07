@@ -54,11 +54,12 @@ public class Client{
 	@Override
 	public boolean equals(Object other){
 		Client obj = (Client)other;
-		return username.equals(obj.username);
+		System.out.println(username + " - " + obj.username);
+		return username.get().equals(obj.username.get());
 	}
 	public boolean fullEquals(Object other){
 		Client obj = (Client)other;
-		return username.equals(obj.username) || (clientExternalIP.equals(obj.clientExternalIP) && clientInternalIP.equals(obj.clientInternalIP));
+		return username.get().equals(obj.username.get()) || (clientExternalIP.equals(obj.clientExternalIP) && clientInternalIP.equals(obj.clientInternalIP));
 	}
 	public int getNum(){
 		return num;

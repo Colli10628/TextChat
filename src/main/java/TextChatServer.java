@@ -21,7 +21,7 @@ import java.net.SocketException;
 public class TextChatServer{
 	private int port;
 	private ObservableList<Client> clientList = FXCollections.observableArrayList();
-	private HashMap<String, ObjectOutputStream> clientOutputStreams = new HashMap<>();
+	private HashMap<String, Socket> clientSockets = new HashMap<>();
 	ExecutorService executor = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build());
 	
 	
@@ -32,21 +32,21 @@ public class TextChatServer{
 		this.port = port;	
 	}
 
-	void sendNewClientListToClients(){
+	void sendNewClientListToClients(ServerSocket serverSocket, ObjectOutputStream out){
 		try{
 			ArrayList<ClientSerialized> toSend = new ArrayList<>();
 			for(int counter = 0; counter < clientList.size(); counter++){
-				toSend.add(new ClientSerialized(clientList.get(counter)));
+				ClientSerialized temp = new ClientSerialized(clientList.get(counter));
+				if(!temp.getUsername().equals("") && !temp.equals("")){
+					toSend.add(temp);
+					System.out.println(temp);
+				}
 			}
 			for(ClientSerialized current : toSend){
-				try{
-					ObjectOutputStream out = clientOutputStreams.get(current.getOriginal().getIp()+current.getNum());
-					out.writeObject(toSend);
-					System.out.println("Trying to send " + toSend + " to " + current.getOriginal().getIp());
-				}
-				catch(IOException exc){
-					exc.printStackTrace();
-				}
+				Socket tempSock = clientSockets.get(current.getOriginal().getIp()+current.getNum());
+				TextChatData<ArrayList<ClientSerialized>> data = new TextChatData<ArrayList<ClientSerialized>>(tempSock, serverSocket.getInetAddress(), toSend, TextChatData.Type.META,  out);
+				data.send();
+				System.out.println("Trying to send " + toSend + " to " + current.getOriginal().getIp());
 			}
 		}
 		catch(Exception exc){
@@ -62,10 +62,18 @@ public class TextChatServer{
 					try{						
 						System.out.println("Trying to listen on " + port);
 						Socket clientSocket = serverSocket.accept();
+						System.out.println(clientSocket);
 						ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 						ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 						System.out.println("Client connecting on port" + port);
 
+
+						TextChatData initialClientInfo = (TextChatData)in.readObject();
+						if(initialClientInfo.isPortTest()){
+							TextChatData clientPortProbeResponse = new TextChatData(clientSocket, clientSocket.getInetAddress(), false);
+							out.writeObject(initialClientInfo);
+							return;
+						}
 
 						ClientSerialized temp = (ClientSerialized)in.readObject();
 						Client newClient = temp.getOriginal();
@@ -77,7 +85,7 @@ public class TextChatServer{
 						lock.lock();
 						System.out.println("Acquired lock");
 						clientList.add(newClient);
-						clientOutputStreams.put(newClient.getIp() + newClient.getNum(), out);
+						clientSockets.put(newClient.getIp() + newClient.getNum(), clientSocket);
 
 						
 						lock.unlock();
@@ -86,14 +94,14 @@ public class TextChatServer{
 
 							String inputLine = "";
 							try{
-								sendNewClientListToClients();
+								sendNewClientListToClients(serverSocket, out);
 								while((inputLine = (String)in.readObject()) != null){
 									System.out.println("Received message: " + inputLine + " from " + clientSocket.toString());
 								}							
 							}
 							catch(Exception exc){
 								clientList.remove(newClient);
-								sendNewClientListToClients();
+								sendNewClientListToClients(serverSocket, out);
 								try{
 									clientSocket.close();
 								}
