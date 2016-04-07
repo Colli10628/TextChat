@@ -63,10 +63,10 @@ public class TextChatData<T> implements Serializable{
 
 	public void send(){
 		try{
-			Socket socket = socketToDestination;
-			out.writeObject(this);
+			out.writeObject(data);
+			out.flush();
 		}
-		catch(IOException exc){
+		catch(Exception exc){
 			exc.printStackTrace();
 		}
 	}

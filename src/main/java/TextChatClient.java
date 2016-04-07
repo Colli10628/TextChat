@@ -45,15 +45,17 @@ public class TextChatClient{
 					Scanner inputScanner = new Scanner(System.in);
 					System.out.println("Sending output to server...");
 					Client newClient = new Client(hostname, username, NetworkUtilities.getInternalIp(), NetworkUtilities.getExternalIp());
-					out.writeObject(new TextChatData(serverSocket, serverSocket.getInetAddress()/*NetworkUtilities.getExternalIp()*/, true));
+					out.writeObject(new TextChatData(serverSocket, serverSocket.getInetAddress(), true));
 					out.writeObject(new ClientSerialized(newClient));
 
 					while(true){
-							TextChatData<ArrayList<ClientSerialized>> serverOutput = (TextChatData<ArrayList<ClientSerialized>>)in.readObject();
-							ArrayList<ClientSerialized> list = serverOutput.getData();
-							System.out.println(list);
-							otherClientList.clear();
-							otherClientList.addAll(list);	
+						System.out.println("Listening for data");
+						ArrayList<ClientSerialized> list = (ArrayList<ClientSerialized>) in.readObject();
+						in.skip(in.available());
+						System.out.println(list);
+						System.out.println("Clearing list");
+						otherClientList.clear();
+						otherClientList.addAll(list);	
 					}
 				}
 				catch(Exception exc){

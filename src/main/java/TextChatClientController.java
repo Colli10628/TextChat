@@ -71,15 +71,15 @@ public class TextChatClientController {
                     @Override
                     protected void updateItem(ClientSerialized item, boolean empty) {
                         super.updateItem(item, empty);
-						if(item != null){
-							Client temp = item.getOriginal();
-							if(!associatedClient.equals(temp)){
-								setText(item.getUsername());
-							}
-							else{
-                                return;
-							}
-						}
+			if(item != null){
+				Client temp = item.getOriginal();
+				if(!associatedClient.equals(temp)){
+					setText(item.getUsername());
+				}
+				else{
+					return;
+				}
+			}
                         else {
                             return;
                         }

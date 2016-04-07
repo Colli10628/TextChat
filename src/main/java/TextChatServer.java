@@ -22,7 +22,9 @@ public class TextChatServer{
 	private int port;
 	private ObservableList<Client> clientList = FXCollections.observableArrayList();
 	private HashMap<String, Socket> clientSockets = new HashMap<>();
+	private HashMap<String, ObjectOutputStream> clientOutputStreams = new HashMap<>();
 	ExecutorService executor = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build());
+	ReentrantLock lock = new ReentrantLock();
 	
 	
 	ObservableList getObservableClientList(){
@@ -32,7 +34,7 @@ public class TextChatServer{
 		this.port = port;	
 	}
 
-	void sendNewClientListToClients(ServerSocket serverSocket, ObjectOutputStream out){
+	void sendNewClientListToClients(ServerSocket serverSocket){
 		try{
 			ArrayList<ClientSerialized> toSend = new ArrayList<>();
 			for(int counter = 0; counter < clientList.size(); counter++){
@@ -44,9 +46,10 @@ public class TextChatServer{
 			}
 			for(ClientSerialized current : toSend){
 				Socket tempSock = clientSockets.get(current.getOriginal().getIp()+current.getNum());
-				TextChatData<ArrayList<ClientSerialized>> data = new TextChatData<ArrayList<ClientSerialized>>(tempSock, serverSocket.getInetAddress(), toSend, TextChatData.Type.META,  out);
+				ObjectOutputStream out = clientOutputStreams.get(current.getOriginal().getIp()+current.getNum());
+				TextChatData<ArrayList<ClientSerialized>> data = new TextChatData<ArrayList<ClientSerialized>>(tempSock, serverSocket.getInetAddress(), toSend, TextChatData.Type.META, out);
 				data.send();
-				System.out.println("Trying to send " + toSend + " to " + current.getOriginal().getIp());
+				System.out.println("Trying to send " + toSend + " to " + current.getOriginal().getIp() + " " + current.getOriginal().getUsername());
 			}
 		}
 		catch(Exception exc){
@@ -56,7 +59,6 @@ public class TextChatServer{
 	void start(){
 		try{
 			ServerSocket serverSocket = new ServerSocket(port);
-			ReentrantLock lock = new ReentrantLock();
 			while(true){
 				Runnable listenOnPort = () -> {
 					try{						
@@ -86,34 +88,40 @@ public class TextChatServer{
 						System.out.println("Acquired lock");
 						clientList.add(newClient);
 						clientSockets.put(newClient.getIp() + newClient.getNum(), clientSocket);
+						clientOutputStreams.put(newClient.getIp() + newClient.getNum(), out);
 
 						
 						lock.unlock();
 						System.out.println("Client connected on port" + port);
-						Runnable listenForData = () -> {
 
-							String inputLine = "";
-							try{
-								sendNewClientListToClients(serverSocket, out);
-								while((inputLine = (String)in.readObject()) != null){
-									System.out.println("Received message: " + inputLine + " from " + clientSocket.toString());
-								}							
+						String inputLine = "";
+						try{
+							lock.lock();
+							sendNewClientListToClients(serverSocket);
+							lock.unlock();
+							while((inputLine = (String)in.readObject()) != null){
+								System.out.println("Received message: " + inputLine + " from " + clientSocket.toString());
 							}
-							catch(Exception exc){
+						}
+						catch(Exception exc){
+							try{
+								lock.lock();
 								clientList.remove(newClient);
-								sendNewClientListToClients(serverSocket, out);
-								try{
-									clientSocket.close();
-								}
-								catch(IOException exc1){
-									System.out.println(exc1.getMessage());
-								}							
-							}		
-
-						};
+								sendNewClientListToClients(serverSocket);
+								clientSocket.close();
+							}
+							catch(IOException exc1){
+								System.out.println(exc1.getMessage());
+							}							
+							finally{
+								lock.unlock();
+							}
+						}		
+						/*
 						Thread tempThread = new Thread(listenForData);
 						tempThread.setDaemon(true);
 						tempThread.start();
+						*/
 
 					}	
 					catch(SocketException exc){

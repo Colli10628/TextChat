@@ -54,7 +54,6 @@ public class Client{
 	@Override
 	public boolean equals(Object other){
 		Client obj = (Client)other;
-		System.out.println(username + " - " + obj.username);
 		return username.get().equals(obj.username.get());
 	}
 	public boolean fullEquals(Object other){
