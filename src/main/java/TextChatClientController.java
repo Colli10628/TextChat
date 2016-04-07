@@ -8,6 +8,12 @@ import javafx.scene.control.ListCell;
 import javafx.util.Callback;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
+import javafx.scene.input.MouseEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 public class TextChatClientController {
 
@@ -27,6 +33,34 @@ public class TextChatClientController {
 		tClient = new TextChatClient(Integer.valueOf(port), ip, username);
 		clientList.setItems(tClient.getObservableOtherClientsList());
 	}
+
+    @FXML
+    void openChatWindow(MouseEvent event) {
+	try{
+		URL url = getClass().getClassLoader().getResource("TextChatConversationController.fxml");
+		FXMLLoader fxmlLoader = new FXMLLoader(url);     
+
+		Parent root = (Parent)fxmlLoader.load();          
+		TextChatConversationController controller = (TextChatConversationController)fxmlLoader.getController();
+		if(controller == null){
+			System.out.println("Controller is null!");
+		}
+	//	controller.initPortAndIP(portTextField.getText(), NetworkUtilities.getExternalIp() + " / " + NetworkUtilities.getInternalIp());
+
+		controller.initSlider();
+		Scene scene = new Scene(root); 
+		Stage stage = new Stage();
+		stage.setTitle("TextChat Conversation");
+		stage.setScene(scene);    
+
+		stage.show();   
+	}
+	catch(IOException exc){
+		exc.printStackTrace();
+	}
+    }
+
+
     @FXML
     void initialize() {
         assert clientList != null : "fx:id=\"clientList\" was not injected: check your FXML file 'TextChatClientController.fxml'.";
