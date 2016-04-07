@@ -23,6 +23,7 @@ public class TextChatServer{
 	private ObservableList<Client> clientList = FXCollections.observableArrayList();
 	private HashMap<String, Socket> clientSockets = new HashMap<>();
 	private HashMap<String, ObjectOutputStream> clientOutputStreams = new HashMap<>();
+	private HashMap<String, ObjectOutputStream> userOutputStreamMap = new HashMap<>();
 	ExecutorService executor = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).build());
 	ReentrantLock lock = new ReentrantLock();
 	
@@ -34,6 +35,12 @@ public class TextChatServer{
 		this.port = port;	
 	}
 
+	void forwardMessage(String destinationUsername, String senderUsername, String message){
+		ObjectOutputStream out = clientOutputStreams.get(destinationUsername);
+		Socket socket = clientSockets.get(destinationUsername);
+		TextChatData toUser = new TextChatData(socket, senderUsername, message, TextChatData.Type.MESSAGE, out);
+		toUser.send();
+	}
 	void sendNewClientListToClients(ServerSocket serverSocket){
 		try{
 			ArrayList<ClientSerialized> toSend = new ArrayList<>();
@@ -45,9 +52,9 @@ public class TextChatServer{
 				}
 			}
 			for(ClientSerialized current : toSend){
-				Socket tempSock = clientSockets.get(current.getOriginal().getIp()+current.getNum());
-				ObjectOutputStream out = clientOutputStreams.get(current.getOriginal().getIp()+current.getNum());
-				TextChatData<ArrayList<ClientSerialized>> data = new TextChatData<ArrayList<ClientSerialized>>(tempSock, serverSocket.getInetAddress(), toSend, TextChatData.Type.META, out);
+				Socket tempSock = clientSockets.get(current.getUsername());
+				ObjectOutputStream out = clientOutputStreams.get(current.getUsername());
+				TextChatData<ArrayList<ClientSerialized>> data = new TextChatData<ArrayList<ClientSerialized>>(tempSock, "Server", toSend, TextChatData.Type.META, out);
 				data.send();
 				System.out.println("Trying to send " + toSend + " to " + current.getOriginal().getIp() + " " + current.getOriginal().getUsername());
 			}
@@ -72,7 +79,7 @@ public class TextChatServer{
 
 						TextChatData initialClientInfo = (TextChatData)in.readObject();
 						if(initialClientInfo.isPortTest()){
-							TextChatData clientPortProbeResponse = new TextChatData(clientSocket, clientSocket.getInetAddress(), false);
+							TextChatData clientPortProbeResponse = new TextChatData(clientSocket, "Server", false);
 							out.writeObject(initialClientInfo);
 							return;
 						}
@@ -87,23 +94,28 @@ public class TextChatServer{
 						lock.lock();
 						System.out.println("Acquired lock");
 						clientList.add(newClient);
-						clientSockets.put(newClient.getIp() + newClient.getNum(), clientSocket);
-						clientOutputStreams.put(newClient.getIp() + newClient.getNum(), out);
+						clientSockets.put(temp.getUsername(), clientSocket);
+						clientOutputStreams.put(temp.getUsername(), out);
+						userOutputStreamMap.put(temp.getUsername(), out);
 
 						
 						lock.unlock();
 						System.out.println("Client connected on port" + port);
 
-						String inputLine = "";
 						try{
 							lock.lock();
 							sendNewClientListToClients(serverSocket);
 							lock.unlock();
-							while((inputLine = (String)in.readObject()) != null){
-								System.out.println("Received message: " + inputLine + " from " + clientSocket.toString());
+							TextChatData clientInput;
+							while((clientInput = (TextChatData)in.readObject()) != null){
+								if(clientInput.isMessage()){
+									System.out.println(clientInput.getData());
+									forwardMessage(clientInput.getDestinationUsername(), clientInput.getSource(), (String)clientInput.getData());
+								}
 							}
 						}
 						catch(Exception exc){
+							exc.printStackTrace();
 							try{
 								lock.lock();
 								clientList.remove(newClient);

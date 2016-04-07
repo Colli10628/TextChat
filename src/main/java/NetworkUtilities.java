@@ -99,7 +99,7 @@ public static boolean isPortAvailable(String host, int port)
 		ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 		ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 
-		out.writeObject(new TextChatData(s, s.getInetAddress(), false));
+		out.writeObject(new TextChatData(s, "PortPoll", false));
 
 		TextChatData temp = (TextChatData)in.readObject();
 

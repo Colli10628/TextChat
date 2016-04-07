@@ -56,8 +56,8 @@ public class TextChatClientController {
 			stage.setScene(scene);    
 
 			stage.show();   
+			tClient.sendMessage(associatedClient.getUsername(), "Testing");
 			clientList.getSelectionModel().clearSelection();
-
 		}
 	}
 	catch(IOException exc){

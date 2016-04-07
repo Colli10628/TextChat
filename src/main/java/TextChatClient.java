@@ -19,6 +19,8 @@ public class TextChatClient{
 	private String hostname;
 	private String username;
 	private boolean quit;
+	private Socket serverSocket;
+	private ObjectOutputStream out;
 	private ObservableList<ClientSerialized> otherClientList = FXCollections.observableArrayList();
 	
 	TextChatClient(int port, String hostname, String username){
@@ -34,34 +36,44 @@ public class TextChatClient{
 	public ObservableList<ClientSerialized> getObservableOtherClientsList(){
 		return otherClientList;
 	}
+	public void sendMessage(String username, String message){
+		TextChatData sender = new TextChatData(serverSocket, this.username, "Polling message", TextChatData.Type.MESSAGE, username, out);
+		sender.send();
+	}
 	private void initClient(){
 		boolean quit = false;
 		try{
+			serverSocket = new Socket(hostname, port);
+			out = new ObjectOutputStream(serverSocket.getOutputStream());
 			Runnable getNewClientList = () -> {
 				try{
-					Socket serverSocket = new Socket(hostname, port);
-					ObjectOutputStream out = new ObjectOutputStream(serverSocket.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(serverSocket.getInputStream());
 					Scanner inputScanner = new Scanner(System.in);
 					System.out.println("Sending output to server...");
 					Client newClient = new Client(hostname, username, NetworkUtilities.getInternalIp(), NetworkUtilities.getExternalIp());
-					out.writeObject(new TextChatData(serverSocket, serverSocket.getInetAddress(), true));
+					out.writeObject(new TextChatData(serverSocket, "username", true));
 					out.writeObject(new ClientSerialized(newClient));
 
 					while(true){
 						System.out.println("Listening for data");
-						ArrayList<ClientSerialized> list = (ArrayList<ClientSerialized>) in.readObject();
-						in.skip(in.available());
-						System.out.println(list);
-						System.out.println("Clearing list");
-						otherClientList.clear();
-						Client temp = new Client(hostname, username);
-						ArrayList<ClientSerialized> toRemove = new ArrayList<>();
-						for(ClientSerialized curr : list){
-							System.out.println(curr);
-							if(!temp.equals(curr.getOriginal())){
-								otherClientList.add(curr);
+						TextChatData serverOutput = (TextChatData)in.readObject();
+						if(serverOutput.isMeta()){
+							ArrayList<ClientSerialized> list = (ArrayList<ClientSerialized>)serverOutput.getData();
+							in.skip(in.available());
+							System.out.println(list);
+							System.out.println("Clearing list");
+							otherClientList.clear();
+							Client temp = new Client(hostname, username);
+							ArrayList<ClientSerialized> toRemove = new ArrayList<>();
+							for(ClientSerialized curr : list){
+								System.out.println(curr);
+								if(!temp.equals(curr.getOriginal())){
+									otherClientList.add(curr);
+								}
 							}
+						}
+						if(serverOutput.isMessage()){
+							System.out.println("Message " + (String)serverOutput.getData());
 						}
 					}
 				}

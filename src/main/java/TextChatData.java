@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.InetAddress;
 
 public class TextChatData<T> implements Serializable{
 	public enum Type{
@@ -18,41 +17,41 @@ public class TextChatData<T> implements Serializable{
 	transient private Socket socketToDestination;
 	transient private ObjectOutputStream out;
 	private String nameOfUser;
-	private InetAddress ipOfSource;
+	private String nameOfSender;
 	private T data;
 	private Type dataType;
 
 	TextChatData(){
 		nameOfUser = "";
 		socketToDestination = null;
-		ipOfSource = null;
+		nameOfSender = null;
 		data = null;
 		dataType = Type.NONE;
 	}
 
-	TextChatData(Socket destination, InetAddress source, T newData, Type type, String nameOfUser){ //Typically used by clients sending messages to other clients
+	TextChatData(Socket destination, String sender , T newData, Type type, String nameOfDestinationUser, ObjectOutputStream outputStreamToServer){ //Typically used by clients sending messages to other clients
 		this();
 		socketToDestination = destination;
-		ipOfSource = source;
+		nameOfSender = sender;
 		data = newData;
 		dataType = type;
-		this.nameOfUser = nameOfUser;
+		this.nameOfUser = nameOfDestinationUser;
+		out = outputStreamToServer;
 	}
 
-	TextChatData(Socket destination, InetAddress source, T newData, Type type, ObjectOutputStream out){ //Typically used by clients sending messages to other clients
+	TextChatData(Socket destination, String source, T newData, Type type, ObjectOutputStream out){ 
 		this();
 		socketToDestination = destination;
-		ipOfSource = source;
+		nameOfSender = source;
 		data = newData;
 		dataType = type;
-		this.nameOfUser = nameOfUser;
 		this.out = out;
 	}
 
-	TextChatData(Socket destination, InetAddress source, boolean isNone){
+	TextChatData(Socket destination, String source, boolean isNone){
 		this();
 		socketToDestination = destination;
-		ipOfSource = source;
+		nameOfSender = source;
 		if(isNone){
 			dataType = Type.NONE;
 		}
@@ -63,7 +62,7 @@ public class TextChatData<T> implements Serializable{
 
 	public void send(){
 		try{
-			out.writeObject(data);
+			out.writeObject(this);
 			out.flush();
 		}
 		catch(Exception exc){
@@ -75,20 +74,24 @@ public class TextChatData<T> implements Serializable{
 		data = newData;	
 	}
 
-	public void setSource(InetAddress newSource){
-		ipOfSource = newSource;
+	public void setSource(String newSource){
+		nameOfSender = newSource;
 	}
 
 	public void setDestination(Socket newDestination){
 		socketToDestination = newDestination;
 	}
 
-	public InetAddress getSource(){
-		return ipOfSource;
+	public String getSource(){
+		return nameOfSender;
 	}
 
 	public Socket getDestination(){
 		return socketToDestination;
+	}
+
+	public String getDestinationUsername(){
+		return nameOfUser;
 	}
 	public T getData(){
 		return data;
