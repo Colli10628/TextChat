@@ -37,23 +37,28 @@ public class TextChatClientController {
     @FXML
     void openChatWindow(MouseEvent event) {
 	try{
-		URL url = getClass().getClassLoader().getResource("TextChatConversationController.fxml");
-		FXMLLoader fxmlLoader = new FXMLLoader(url);     
+		ClientSerialized selected = clientList.getSelectionModel().getSelectedItem();
+		if(selected != null){
+			URL url = getClass().getClassLoader().getResource("TextChatConversationController.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(url);     
 
-		Parent root = (Parent)fxmlLoader.load();          
-		TextChatConversationController controller = (TextChatConversationController)fxmlLoader.getController();
-		if(controller == null){
-			System.out.println("Controller is null!");
+			Parent root = (Parent)fxmlLoader.load();          
+			TextChatConversationController controller = (TextChatConversationController)fxmlLoader.getController();
+			if(controller == null){
+				System.out.println("Controller is null!");
+			}
+		//	controller.initPortAndIP(portTextField.getText(), NetworkUtilities.getExternalIp() + " / " + NetworkUtilities.getInternalIp());
+
+			controller.initSlider();
+			Scene scene = new Scene(root); 
+			Stage stage = new Stage();
+			stage.setTitle("TextChat Conversation");
+			stage.setScene(scene);    
+
+			stage.show();   
+			clientList.getSelectionModel().clearSelection();
+
 		}
-	//	controller.initPortAndIP(portTextField.getText(), NetworkUtilities.getExternalIp() + " / " + NetworkUtilities.getInternalIp());
-
-		controller.initSlider();
-		Scene scene = new Scene(root); 
-		Stage stage = new Stage();
-		stage.setTitle("TextChat Conversation");
-		stage.setScene(scene);    
-
-		stage.show();   
 	}
 	catch(IOException exc){
 		exc.printStackTrace();
