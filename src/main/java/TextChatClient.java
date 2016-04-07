@@ -55,7 +55,14 @@ public class TextChatClient{
 						System.out.println(list);
 						System.out.println("Clearing list");
 						otherClientList.clear();
-						otherClientList.addAll(list);	
+						Client temp = new Client(hostname, username);
+						ArrayList<ClientSerialized> toRemove = new ArrayList<>();
+						for(ClientSerialized curr : list){
+							System.out.println(curr);
+							if(!temp.equals(curr.getOriginal())){
+								otherClientList.add(curr);
+							}
+						}
 					}
 				}
 				catch(Exception exc){
