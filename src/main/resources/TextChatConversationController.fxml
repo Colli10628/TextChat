@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="321.0" prefWidth="426.0" styleClass="background" stylesheets="@textchat.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="textchat.TextChatConversationController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="321.0" prefWidth="426.0" styleClass="background" stylesheets="@textchat.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="textchat.TextChatConversationController">
    <children>
       <Label layoutX="80.0" layoutY="14.0" text="TextChat Conversation">
          <font>
@@ -24,7 +24,7 @@
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                            <children>
-                              <ListView prefHeight="130.0" prefWidth="271.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ListView fx:id="messageList" prefHeight="130.0" prefWidth="271.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -40,7 +40,7 @@
                <children>
                   <HBox fillHeight="false" prefHeight="131.0" prefWidth="424.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextArea prefHeight="25.0" prefWidth="360.0" HBox.hgrow="ALWAYS" />
+                        <TextArea fx:id="messageBox" prefHeight="25.0" prefWidth="360.0" HBox.hgrow="ALWAYS" />
                         <Button defaultButton="true" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="65.0" text="Send" HBox.hgrow="NEVER" />
                      </children>
                   </HBox>

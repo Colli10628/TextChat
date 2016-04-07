@@ -53,7 +53,7 @@ public static String getInternalIp() throws SocketException
 			InetAddress addr = addresses.nextElement();
 			if( addr instanceof Inet4Address && !addr.isLoopbackAddress() )
 			{
-				return addr.getCanonicalHostName();
+				return addr.getHostName();
 			}
 		}
 	}

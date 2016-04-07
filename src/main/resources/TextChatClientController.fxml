@@ -6,14 +6,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="426.0" styleClass="background" stylesheets="@textchat.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="textchat.TextChatClientController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="426.0" styleClass="background" stylesheets="@textchat.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="textchat.TextChatClientController">
    <children>
       <Label layoutX="112.0" layoutY="14.0" text="TextChat Client">
          <font>
             <Font size="26.0" />
          </font>
       </Label>
-      <ListView fx:id="clientList" layoutY="67.0" onMouseClicked="#openChatWindow" prefHeight="335.0" prefWidth="426.0" />
+      <ListView fx:id="clientList" layoutY="67.0" onMouseClicked="#openChatWindowOnClick" prefHeight="335.0" prefWidth="426.0" />
       <Text layoutX="14.0" layoutY="58.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Available People" />
    </children>
 </AnchorPane>

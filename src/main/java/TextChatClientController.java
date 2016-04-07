@@ -14,8 +14,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.HashMap;
+import javafx.application.Platform;
 
 public class TextChatClientController {
+	private HashMap<String, TextChatConversationController> mapOfConversationWindows;
 
     @FXML
     private ResourceBundle resources;
@@ -30,15 +33,13 @@ public class TextChatClientController {
 	private Client associatedClient;
 	public void initClient(String port, String ip, String username){
 		associatedClient = new Client(ip, username);
-		tClient = new TextChatClient(Integer.valueOf(port), ip, username);
+		tClient = new TextChatClient(Integer.valueOf(port), ip, username, this);
 		clientList.setItems(tClient.getObservableOtherClientsList());
 	}
 
-    @FXML
-    void openChatWindow(MouseEvent event) {
-	try{
-		ClientSerialized selected = clientList.getSelectionModel().getSelectedItem();
-		if(selected != null){
+	
+	TextChatConversationController openChatWindow(String remoteUsername){
+		try{
 			URL url = getClass().getClassLoader().getResource("TextChatConversationController.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(url);     
 
@@ -49,20 +50,29 @@ public class TextChatClientController {
 			}
 		//	controller.initPortAndIP(portTextField.getText(), NetworkUtilities.getExternalIp() + " / " + NetworkUtilities.getInternalIp());
 
-			controller.initSlider();
+			controller.initConversationWindow(associatedClient.getUsername(), remoteUsername, tClient);
 			Scene scene = new Scene(root); 
 			Stage stage = new Stage();
 			stage.setTitle("TextChat Conversation");
 			stage.setScene(scene);    
 
 			stage.show();   
-			tClient.sendMessage(associatedClient.getUsername(), "Testing");
-			clientList.getSelectionModel().clearSelection();
+			return controller;
 		}
+		catch(IOException exc){
+			exc.printStackTrace();
+			return null;
+		}
+
 	}
-	catch(IOException exc){
-		exc.printStackTrace();
-	}
+    @FXML
+    void openChatWindowOnClick(MouseEvent event) {
+		ClientSerialized selected = clientList.getSelectionModel().getSelectedItem();
+		if(selected != null){
+			openChatWindow(selected.getUsername());
+			clientList.getSelectionModel().clearSelection();
+
+		}
     }
 
 

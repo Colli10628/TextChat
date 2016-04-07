@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import javafx.collections.ObservableList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javafx.collections.FXCollections;
 import javafx.application.Platform;
 
@@ -22,13 +23,21 @@ public class TextChatClient{
 	private Socket serverSocket;
 	private ObjectOutputStream out;
 	private ObservableList<ClientSerialized> otherClientList = FXCollections.observableArrayList();
+	private HashMap<String, TextChatConversationController> mapOfConversationWindows = new HashMap<>();
+	public TextChatClientController controller;
+	
 	
 	TextChatClient(int port, String hostname, String username){
 		this.port = port;
 		this.hostname = hostname;
 		this.username = username;
 		quit = false;
+		controller = null;
 		initClient();
+	}
+	TextChatClient(int port, String hostname, String username, TextChatClientController ctroller){
+		this(port, hostname,username);
+		controller = ctroller;
 	}
 	private void setQuit(){
 		quit = true;
@@ -37,7 +46,7 @@ public class TextChatClient{
 		return otherClientList;
 	}
 	public void sendMessage(String username, String message){
-		TextChatData sender = new TextChatData(serverSocket, this.username, "Polling message", TextChatData.Type.MESSAGE, username, out);
+		TextChatData sender = new TextChatData(serverSocket, this.username, message, TextChatData.Type.MESSAGE, username, out);
 		sender.send();
 	}
 	private void initClient(){
@@ -73,7 +82,20 @@ public class TextChatClient{
 							}
 						}
 						if(serverOutput.isMessage()){
-							System.out.println("Message " + (String)serverOutput.getData());
+							Platform.runLater(new Runnable(){
+								@Override public void run(){
+									System.out.println("Source :" + serverOutput.getSource());
+									TextChatConversationController window = mapOfConversationWindows.get(serverOutput.getSource());
+									if(window == null){
+										TextChatConversationController convController = controller.openChatWindow(serverOutput.getSource());
+										mapOfConversationWindows.put(serverOutput.getSource(), convController);	
+										window = mapOfConversationWindows.get(serverOutput.getSource());
+									}
+						
+									window.addToConvoList((String)serverOutput.getData());
+									System.out.println("Message " + (String)serverOutput.getData());
+								}
+							});
 						}
 					}
 				}
