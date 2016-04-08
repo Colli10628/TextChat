@@ -39,6 +39,9 @@ public class TextChatClient{
 		this(port, hostname,username);
 		controller = ctroller;
 	}
+	public void appendWindowToMap(String username, TextChatConversationController window){
+		mapOfConversationWindows.put(username, window);
+	}
 	private void setQuit(){
 		quit = true;
 	}
@@ -91,7 +94,6 @@ public class TextChatClient{
 										mapOfConversationWindows.put(serverOutput.getSource(), convController);	
 										window = mapOfConversationWindows.get(serverOutput.getSource());
 									}
-						
 									window.addToConvoList((String)serverOutput.getData());
 									System.out.println("Message " + (String)serverOutput.getData());
 								}

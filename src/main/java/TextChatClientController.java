@@ -69,7 +69,8 @@ public class TextChatClientController {
     void openChatWindowOnClick(MouseEvent event) {
 		ClientSerialized selected = clientList.getSelectionModel().getSelectedItem();
 		if(selected != null){
-			openChatWindow(selected.getUsername());
+			String username = selected.getUsername();
+			tClient.appendWindowToMap(username, openChatWindow(selected.getUsername()));
 			clientList.getSelectionModel().clearSelection();
 
 		}
