@@ -51,7 +51,7 @@ public class TextChatServerController {
 		server = new TextChatServer(Integer.valueOf(port));
 		clientsTable.setItems(server.getObservableClientList());
 		usernameColumn.setCellValueFactory(new PropertyValueFactory("username"));
-		ipColumn.setCellValueFactory(new PropertyValueFactory("ip"));
+		ipColumn.setCellValueFactory(new PropertyValueFactory("externalIP"));
 		Runnable task = () ->{
 			server.start();
 		};

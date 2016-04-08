@@ -22,7 +22,7 @@ public class ClientSerialized implements Serializable{
 	}
 
 	public String getIp(){
-		return ip;
+		return clientExternalIP;
 	}
 
 	public String getUsername(){
