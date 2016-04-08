@@ -1,3 +1,5 @@
+![Screenshot](https://raw.githubusercontent.com/chenshuiluke/TextChat/master/screenshots/three_windows.jpe)
+
 #Compilation Instructions:
 
 Just install gradle and Java 8, cd into the directory and run :`gradle --daemon build`
