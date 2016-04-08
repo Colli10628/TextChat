@@ -2,10 +2,15 @@
 
 #Compilation Instructions:
 
-Just install gradle and Java 8, cd into the directory and run :`gradle --daemon build`
+Just install gradle and Java 8, cd into the directory and run :`gradle --daemon build` or `gradle --daemon shadowJar`
 
 #Running:
 
-`cd build/classes/main`
+`gradle --daemon run` or `cd build/libs && java -jar TextChat-all.jar`
 
-`java textchat.TextChat 15032` for the server or `java textchat.TextChat 15032 localhost` for the client
+1. Click the server button on the launcher if you want to run it in server mode. Give your users the port and external ip (or the internal ip if they're on your network.)
+
+2. Enter the port, username and ip you want to connect to.
+
+3. You should see a list of other users connected to the same server.
+
