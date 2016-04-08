@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.HashMap;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.stage.WindowEvent;
+import javafx.scene.Node;
 
 public class TextChatClientController {
 	private HashMap<String, TextChatConversationController> mapOfConversationWindows;
@@ -56,7 +59,15 @@ public class TextChatClientController {
 			stage.setTitle("TextChat Conversation");
 			stage.setScene(scene);    
 
-			stage.show();   
+			stage.show();
+
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			      public void handle(WindowEvent we) {
+			          controller.isClosed = true;
+			      }
+			  }); 
+
+
 			return controller;
 		}
 		catch(IOException exc){

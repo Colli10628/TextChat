@@ -94,6 +94,13 @@ public class TextChatClient{
 										mapOfConversationWindows.put(serverOutput.getSource(), convController);	
 										window = mapOfConversationWindows.get(serverOutput.getSource());
 									}
+									else if(window.isClosed){
+										mapOfConversationWindows.remove(serverOutput.getSource());
+										TextChatConversationController convController = controller.openChatWindow(serverOutput.getSource());
+										mapOfConversationWindows.put(serverOutput.getSource(), convController);	
+										window = mapOfConversationWindows.get(serverOutput.getSource());
+
+									}
 									window.addToConvoList((String)serverOutput.getData());
 									System.out.println("Message " + (String)serverOutput.getData());
 								}

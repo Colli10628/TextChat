@@ -8,12 +8,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ListView;
 
-
 public class TextChatConversationController {
 
 	private String localUsername;
 	private String remoteUsername;
 	private TextChatClient tClient;
+	public boolean isClosed;
     @FXML
     private ResourceBundle resources;
 
@@ -44,6 +44,8 @@ public class TextChatConversationController {
 		remoteUsername = remoteUser;
 		tClient = client;
 		initSlider();
+
+
 	}
 	public void initSlider(){
 			/*
@@ -54,8 +56,10 @@ public class TextChatConversationController {
 	}
     @FXML
     void initialize() {
+    	isClosed = false;
         assert godSplitPane != null : "fx:id=\"godSplitPane\" was not injected: check your FXML file 'TextChatConversationController.fxml'.";
 
     }
+
 }
 

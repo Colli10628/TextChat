@@ -5,8 +5,8 @@ import java.security.SecureRandom;
 public class Client{
 	StringProperty ip;
 	StringProperty username;
-	String clientInternalIP;
-	String clientExternalIP;
+	StringProperty clientInternalIP;
+	StringProperty clientExternalIP;
 	int num;	
 	Client(){
 		try{
@@ -14,8 +14,10 @@ public class Client{
 			username = new SimpleStringProperty("");
 			SecureRandom random = new SecureRandom();
 			num = random.nextInt(10);
-			clientInternalIP = NetworkUtilities.getInternalIp();
-			clientExternalIP = NetworkUtilities.getExternalIp();
+			clientInternalIP = new SimpleStringProperty();
+			clientExternalIP = new SimpleStringProperty();
+			clientInternalIP.set(NetworkUtilities.getInternalIp());
+			clientExternalIP.set(NetworkUtilities.getExternalIp());
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
@@ -30,14 +32,14 @@ public class Client{
 		this();
 		this.ip.set(ip);
 		this.username.set(username);
-		clientInternalIP = internalIP;
-		clientExternalIP = externalIP;
+		clientInternalIP.set(internalIP);
+		clientExternalIP.set(externalIP);
 	}
 	public String getInternalIP(){
-		return clientInternalIP;
+		return clientInternalIP.get();
 	}
 	public String getExternalIP(){
-		return clientExternalIP;
+		return clientExternalIP.get();
 	}
 	public String getIp(){
 		return ip.get();
@@ -50,6 +52,12 @@ public class Client{
 	}
 	public StringProperty ipProperty(){
 		return ip;
+	}
+	public StringProperty internalIPProperty(){
+		return clientInternalIP;
+	}
+	public StringProperty externalIPProperty(){
+		return clientExternalIP;
 	}
 	@Override
 	public boolean equals(Object other){
