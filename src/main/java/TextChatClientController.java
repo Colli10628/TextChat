@@ -90,7 +90,13 @@ public class TextChatClientController {
 			if(item != null){
 				Client temp = item.getOriginal();
 				if(!associatedClient.equals(temp)){
-					setText(item.getUsername());
+					Platform.runLater(new Runnable(){
+						@Override public void run(){
+							setText(item.getUsername());
+						}
+						
+					});
+					
 				}
 				else{
 					return;
