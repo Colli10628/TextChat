@@ -127,7 +127,7 @@ public class TextChatClient{
 									if(!window.isFocused()){
 										
 										clip.play(1.0);
-										Notifications notif = Notifications.create().title("New Message").text(source + " send you a new message!");
+										Notifications notif = Notifications.create().title("New Message").text(source + " sent you a new message!");
 										notif.onAction(new EventHandler<ActionEvent>(){
 											public void handle(ActionEvent e){
 												window.requestFocus();

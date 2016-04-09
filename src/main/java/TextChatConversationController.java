@@ -41,9 +41,12 @@ public class TextChatConversationController {
 
     @FXML
     void sendMessage() {
-			tClient.sendMessage(remoteUsername, messageBox.getText());
-			messageList.getItems().add(messageBox.getText());
-			messageBox.setText("");
+    		String message = messageBox.getText();
+    		if(message.trim().length() > 0){
+	 			tClient.sendMessage(remoteUsername, message);
+				messageList.getItems().add(message);
+				messageBox.setText("");   			
+    		}
     }
 	public void initConversationWindow(String localUser, String remoteUser, TextChatClient client){
 		localUsername = localUser;
