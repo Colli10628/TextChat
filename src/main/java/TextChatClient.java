@@ -14,6 +14,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.collections.FXCollections;
 import javafx.application.Platform;
+import javafx.stage.Window;
+import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.media.AudioClip;
+import java.io.File;
 
 public class TextChatClient{
 	private int port;
@@ -97,20 +104,35 @@ public class TextChatClient{
 							Platform.runLater(new Runnable(){
 								@Override public void run(){
 									System.out.println("Source :" + serverOutput.getSource());
-									TextChatConversationController window = mapOfConversationWindows.get(serverOutput.getSource());
-									if(window == null){
-										TextChatConversationController convController = controller.openChatWindow(serverOutput.getSource());
-										mapOfConversationWindows.put(serverOutput.getSource(), convController);	
-										window = mapOfConversationWindows.get(serverOutput.getSource());
+									String source = serverOutput.getSource();
+									TextChatConversationController windowController = mapOfConversationWindows.get(serverOutput.getSource());
+									if(windowController == null){
+										TextChatConversationController convController = controller.openChatWindow(source);
+										mapOfConversationWindows.put(source, convController);	
+										windowController = mapOfConversationWindows.get(source);
 									}
-									else if(window.isClosed){
-										mapOfConversationWindows.remove(serverOutput.getSource());
-										TextChatConversationController convController = controller.openChatWindow(serverOutput.getSource());
-										mapOfConversationWindows.put(serverOutput.getSource(), convController);	
-										window = mapOfConversationWindows.get(serverOutput.getSource());
+									else if(windowController.isClosed){
+										mapOfConversationWindows.remove(source);
+										TextChatConversationController convController = controller.openChatWindow(source);
+										mapOfConversationWindows.put(source, convController);	
+										windowController = mapOfConversationWindows.get(source);
 
 									}
-									window.addToConvoList((String)serverOutput.getData());
+									
+									Stage window = windowController.getWindow();
+									if(!window.isFocused()){
+										AudioClip clip = new AudioClip(this.getClass().getClassLoader().getResource("ascending.aiff").toString());
+										clip.play(1.0);
+										Notifications notif = Notifications.create().title("New Message").text(source + " send you a new message!");
+										notif.onAction(new EventHandler<ActionEvent>(){
+											public void handle(ActionEvent e){
+												window.requestFocus();
+											}
+										});
+										notif.showInformation();
+									}
+									
+									windowController.addToConvoList((String)serverOutput.getData());
 									System.out.println("Message " + (String)serverOutput.getData());
 								}
 							});
