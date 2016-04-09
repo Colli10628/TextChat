@@ -21,6 +21,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.media.AudioClip;
 import java.io.File;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 
 public class TextChatClient{
 	private int port;
@@ -32,9 +35,10 @@ public class TextChatClient{
 	private ObservableList<ClientSerialized> otherClientList = FXCollections.observableArrayList();
 	private HashMap<String, TextChatConversationController> mapOfConversationWindows = new HashMap<>();
 	public TextChatClientController controller;
-	
+	AudioClip clip;
 	
 	TextChatClient(int port, String hostname, String username){
+		clip = new AudioClip(this.getClass().getClassLoader().getResource("si.wav").toString());
 		this.port = port;
 		this.hostname = hostname;
 		this.username = username;
@@ -121,7 +125,7 @@ public class TextChatClient{
 									
 									Stage window = windowController.getWindow();
 									if(!window.isFocused()){
-										AudioClip clip = new AudioClip(this.getClass().getClassLoader().getResource("ascending.aiff").toString());
+										
 										clip.play(1.0);
 										Notifications notif = Notifications.create().title("New Message").text(source + " send you a new message!");
 										notif.onAction(new EventHandler<ActionEvent>(){
