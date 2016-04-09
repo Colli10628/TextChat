@@ -10,6 +10,9 @@ import javafx.scene.control.ListView;
 import javafx.stage.Window;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 
 public class TextChatConversationController {
 
@@ -26,18 +29,18 @@ public class TextChatConversationController {
     @FXML
     private URL location;
 
-    @FXML
-    private SplitPane godSplitPane;
-
 	@FXML
 	private ListView<String> messageList;
+
+    @FXML
+    private Button sendButton;
 
 	public void addToConvoList(String newMessage){
 		messageList.getItems().add(newMessage);	
 	}
 
     @FXML
-    void sendMessage(MouseEvent event) {
+    void sendMessage() {
 			tClient.sendMessage(remoteUsername, messageBox.getText());
 			messageList.getItems().add(messageBox.getText());
 			messageBox.setText("");
@@ -46,24 +49,27 @@ public class TextChatConversationController {
 		localUsername = localUser;
 		remoteUsername = remoteUser;
 		tClient = client;
-		initSlider();
 	}
 
 	public Stage getWindow(){
 		return (Stage)((Node)messageList).getScene().getWindow();
 	}
 
-	public void initSlider(){
-			/*
-			godSplitPane.getDividers().get(0).positionProperty()
-					.bind(godSplitPane.heightProperty().divide(4));
-			*/
+ 
+     @FXML
+    void sendMessageFromEnter(KeyEvent event) {
+    	if(event.getCode() == KeyCode.ENTER){
+    		sendMessage();
+    	}
+    }
 
-	}
+
     @FXML
     void initialize() {
     	isClosed = false;
-        assert godSplitPane != null : "fx:id=\"godSplitPane\" was not injected: check your FXML file 'TextChatConversationController.fxml'.";
+        assert messageList != null : "fx:id=\"messageList\" was not injected: check your FXML file 'TextChatConversationController.fxml'.";
+        assert messageBox != null : "fx:id=\"messageBox\" was not injected: check your FXML file 'TextChatConversationController.fxml'.";
+        assert sendButton != null : "fx:id=\"sendButton\" was not injected: check your FXML file 'TextChatConversationController.fxml'.";
 
     }
 
