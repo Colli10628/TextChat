@@ -37,15 +37,19 @@ public class TextChatConversationController {
 
 	public void addToConvoList(String newMessage){
 		messageList.getItems().add(newMessage);	
+		scrollToBottom();
 	}
-
+	public void scrollToBottom(){
+		messageList.scrollTo(messageList.getItems().size() - 1);
+	}
     @FXML
     void sendMessage() {
     		String message = messageBox.getText();
     		if(message.trim().length() > 0){
 	 			tClient.sendMessage(remoteUsername, message);
 				messageList.getItems().add(message);
-				messageBox.setText("");   			
+				messageBox.setText(""); 
+				scrollToBottom();  			
     		}
     }
 	public void initConversationWindow(String localUser, String remoteUser, TextChatClient client){
