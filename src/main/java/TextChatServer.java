@@ -38,7 +38,7 @@ public class TextChatServer{
 	void forwardMessage(String destinationUsername, String senderUsername, String message){
 		ObjectOutputStream out = clientOutputStreams.get(destinationUsername);
 		Socket socket = clientSockets.get(destinationUsername);
-		TextChatData toUser = new TextChatData(socket, senderUsername, message, TextChatData.Type.MESSAGE, out);
+		TextChatData toUser = new TextChatData(socket, senderUsername, senderUsername + ": " + message, TextChatData.Type.MESSAGE, out);
 		toUser.send();
 	}
 	void sendNewClientListToClients(ServerSocket serverSocket){

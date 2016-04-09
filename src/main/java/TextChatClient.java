@@ -114,6 +114,7 @@ public class TextChatClient{
 										TextChatConversationController convController = controller.openChatWindow(source);
 										mapOfConversationWindows.put(source, convController);	
 										windowController = mapOfConversationWindows.get(source);
+										windowController.setTitle("Conversation with " + source);
 									}
 									else if(windowController.isClosed){
 										mapOfConversationWindows.remove(source);

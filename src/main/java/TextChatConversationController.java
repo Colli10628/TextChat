@@ -55,7 +55,11 @@ public class TextChatConversationController {
 		return (Stage)((Node)messageList).getScene().getWindow();
 	}
 
- 
+ 	public void setTitle(String title){
+ 		Stage stage = (Stage)((Node)messageList).getScene().getWindow();
+ 		stage.setTitle(title);
+ 	}
+
      @FXML
     void sendMessageFromEnter(KeyEvent event) {
     	if(event.getCode() == KeyCode.ENTER){
