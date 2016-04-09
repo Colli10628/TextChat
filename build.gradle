@@ -8,4 +8,5 @@ repositories {
 }
 dependencies{
 	compile 'com.google.guava:guava:19.0'
+	compile 'org.controlsfx:controlsfx:8.40.10'
 }

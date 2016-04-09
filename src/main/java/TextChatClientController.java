@@ -19,7 +19,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
 import javafx.scene.Node;
-
+import org.controlsfx.control.Notifications;
 public class TextChatClientController {
 	private HashMap<String, TextChatConversationController> mapOfConversationWindows;
 
