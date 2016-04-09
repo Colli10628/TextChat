@@ -81,7 +81,15 @@ public class TextChatClientController {
 		ClientSerialized selected = clientList.getSelectionModel().getSelectedItem();
 		if(selected != null){
 			String username = selected.getUsername();
-			tClient.appendWindowToMap(username, openChatWindow(selected.getUsername()));
+			if(tClient.isWindowInMap(username)){
+				TextChatConversationController controller = tClient.getWindowController(username);
+				controller.getWindow().requestFocus();
+
+			}
+			else{
+				tClient.appendWindowToMap(username, openChatWindow(selected.getUsername()));
+			}
+			
 			clientList.getSelectionModel().clearSelection();
 
 		}

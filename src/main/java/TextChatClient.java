@@ -42,6 +42,15 @@ public class TextChatClient{
 	public void appendWindowToMap(String username, TextChatConversationController window){
 		mapOfConversationWindows.put(username, window);
 	}
+
+	public boolean isWindowInMap(String username){
+		return mapOfConversationWindows.get(username) != null;
+	}
+
+	public TextChatConversationController getWindowController(String username){
+		return mapOfConversationWindows.get(username);
+	}
+
 	private void setQuit(){
 		quit = true;
 	}

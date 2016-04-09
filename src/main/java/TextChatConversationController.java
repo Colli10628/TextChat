@@ -7,6 +7,9 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ListView;
+import javafx.stage.Window;
+import javafx.stage.Stage;
+import javafx.scene.Node;
 
 public class TextChatConversationController {
 
@@ -44,9 +47,12 @@ public class TextChatConversationController {
 		remoteUsername = remoteUser;
 		tClient = client;
 		initSlider();
-
-
 	}
+
+	public Stage getWindow(){
+		return (Stage)((Node)messageList).getScene().getWindow();
+	}
+
 	public void initSlider(){
 			/*
 			godSplitPane.getDividers().get(0).positionProperty()
