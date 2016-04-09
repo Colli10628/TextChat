@@ -56,7 +56,7 @@ public class TextChatClientController {
 			controller.initConversationWindow(associatedClient.getUsername(), remoteUsername, tClient);
 			Scene scene = new Scene(root); 
 			Stage stage = new Stage();
-			stage.setTitle("TextChat Conversation");
+			stage.setTitle("Conversation with " + remoteUsername);
 			stage.setScene(scene);    
 
 			stage.show();
