@@ -20,7 +20,8 @@ import javafx.scene.Scene;
 import java.io.IOException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 public class LauncherController {
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -61,8 +62,15 @@ public class LauncherController {
 		box.showAndWait();
 	}
 
+     @FXML
+    void launchFromEnter(KeyEvent event) {
+    	if(event.getCode() == KeyCode.ENTER){
+    		launch();
+    	}
+    }
+
     @FXML
-    void launch(MouseEvent event) {
+    void launch() {
 		try{
 			if(serverOrClientButton.isSelected()){
 				String enteredPort = portTextField.getText();
@@ -90,7 +98,7 @@ public class LauncherController {
 					stage.setScene(scene);    
 
 					stage.show();   
-					((Node)event.getSource()).getScene().getWindow().hide();
+					((Node)ipText).getScene().getWindow().hide();
 				}
 			}
 			else{
@@ -124,7 +132,7 @@ public class LauncherController {
 
 					stage.show();   
 
-					((Node)event.getSource()).getScene().getWindow().hide();
+					((Node)ipText).getScene().getWindow().hide();
 				}
 				
 			}
